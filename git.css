@@ -1,0 +1,57 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import CustomModal from './CustomModal'; // Adjust import path as needed
+import { navigate } from 'react-router-dom'; // Assuming you're using React Router
+
+const handleTransferAndPay = async () => {
+  const [modalOpen, setModalOpen] = useState(true);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalInputValue, setModalInputValue] = useState('');
+
+  const closeModal = () => setModalOpen(false);
+
+  const handleConfirm = async () => {
+    try {
+      const pw = modalInputValue;
+
+      const response = await axios.get("http://10.83.152.245:8000/akshat.jha/key/pred");
+      const user = response.data["idx"];
+      const distance = response.data["dist"];
+
+      if (user === 'saloni.gupta' && distance <= 50) {
+        setModalMessage('Transaction successful');
+        navigate('/Homepage');
+      } else {
+        setModalMessage('Invalid credentials! Initiating MFA.');
+        // Handle MFA logic here
+      }
+
+      // Simulating OTP verification for demonstration
+      const otp = "9987"; // Replace with actual OTP logic
+
+      if (otp === "9987") {
+        setModalMessage('OTP verified. Proceeding to make transaction....');
+        navigate('/Transaction');
+      } else {
+        setModalMessage('Invalid OTP. Redirecting to login page.');
+        navigate('/Login');
+      }
+    } catch (error) {
+      console.log(error);
+      setModalMessage('Error processing transaction. Please try again.');
+    }
+  };
+
+  return (
+    <div>
+      <CustomModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        message={modalMessage}
+        onConfirm={handleConfirm}
+      />
+    </div>
+  );
+};
+
+export default handleTransferAndPay;
