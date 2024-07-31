@@ -1,0 +1,150 @@
+// src/components/Dashboard.jsx
+import React from 'react';
+import VoiceSimulation from './VoiceSimulation';
+import './styles.css';
+
+const Dashboard = () => {
+  return (
+    <div className="dashboard">
+      <h1>Fraud Detection Simulation</h1>
+      <VoiceSimulation />
+    </div>
+  );
+};
+
+export default Dashboard;
+
+
+// src/components/VoiceSimulation.jsx
+import React, { useState } from 'react';
+import Button from '@mui/material/Button';
+import FraudAlertModal from './FraudAlertModal';
+
+const VoiceSimulation = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const phrases = [
+    'Please provide your OTP',
+    'Can you give me your account number?',
+    'What is your social security number?',
+    'Hi, I am calling from the bank',
+  ];
+
+  const handlePhraseClick = (phrase) => {
+    if (phrase.includes('OTP') || phrase.includes('account number')) {
+      setMessage(`Potential Fraud Detected: "${phrase}"`);
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <h2>Simulate Voice Inputs</h2>
+      <div className="phrase-buttons">
+        {phrases.map((phrase, index) => (
+          <Button
+            key={index}
+            variant="contained"
+            color="primary"
+            onClick={() => handlePhraseClick(phrase)}
+            style={{ margin: '5px' }}
+          >
+            {phrase}
+          </Button>
+        ))}
+      </div>
+      <FraudAlertModal open={open} handleClose={handleClose} message={message} />
+    </div>
+  );
+};
+
+export default VoiceSimulation;
+
+// src/components/FraudAlertModal.jsx
+import React from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const FraudAlertModal = ({ open, handleClose, message }) => {
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-title" variant="h6" component="h2">
+          Fraudulent Activity Detected
+        </Typography>
+        <Typography id="modal-description" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+        <Button variant="contained" color="secondary" onClick={handleClose} sx={{ mt: 2 }}>
+          Close
+        </Button>
+      </Box>
+    </Modal>
+  );
+};
+
+export default FraudAlertModal;
+
+
+// src/App.jsx
+import React from 'react';
+import Dashboard from './components/Dashboard';
+import './styles.css';
+
+const App = () => {
+  return (
+    <div className="App">
+      <Dashboard />
+    </div>
+  );
+};
+
+export default App;
+
+
+/* src/styles.css */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.dashboard {
+  text-align: center;
+}
+
+.phrase-buttons {
+  margin-top: 20px;
+}
