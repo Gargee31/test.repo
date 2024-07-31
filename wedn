@@ -1,0 +1,105 @@
+// src/components/Dashboard.jsx
+import React, { useState } from 'react';
+import Button from '@mui/material/Button';
+import FraudAlertModal from './FraudAlertModal';
+
+const Dashboard = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleDetectFraud = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ textAlign: 'center', padding: '50px' }}>
+      <Button variant="contained" color="primary" onClick={handleDetectFraud}>
+        Simulate Fraud Detection
+      </Button>
+      <FraudAlertModal open={open} handleClose={handleClose} />
+    </div>
+  );
+};
+
+export default Dashboard;
+
+
+
+
+// src/components/FraudAlertModal.jsx
+import React from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const FraudAlertModal = ({ open, handleClose }) => {
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-title" variant="h6" component="h2">
+          Fraudulent Call Detected
+        </Typography>
+        <Typography id="modal-description" sx={{ mt: 2 }}>
+          A potential fraudulent call has been detected. Please take immediate action.
+        </Typography>
+        <Button variant="contained" color="secondary" onClick={handleClose} sx={{ mt: 2 }}>
+          Close
+        </Button>
+      </Box>
+    </Modal>
+  );
+};
+
+export default FraudAlertModal;
+
+
+// src/App.jsx
+import React from 'react';
+import Dashboard from './components/Dashboard';
+
+const App = () => {
+  return (
+    <div>
+      <Dashboard />
+    </div>
+  );
+};
+
+export default App;
+
+
+/* src/styles.css */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
