@@ -1,0 +1,270 @@
+import React, { useState } from 'react';
+import './AudioRecorder.css';
+
+const AudioRecorder = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioURL, setAudioURL] = useState('');
+
+  const startRecording = () => {
+    // Start recording logic
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    // Stop recording logic
+    setIsRecording(false);
+    setAudioURL('audio-file-url'); // Set the recorded audio file URL
+  };
+
+  return (
+    <div className="audio-recorder">
+      <h2>Audio Recorder</h2>
+      <button onClick={startRecording} disabled={isRecording}>Start Recording</button>
+      <button onClick={stopRecording} disabled={!isRecording}>Stop Recording</button>
+      {audioURL && <audio controls src={audioURL}></audio>}
+    </div>
+  );
+};
+
+export default AudioRecorder;
+
+
+
+.audio-recorder {
+  margin: 20px;
+}
+
+.audio-recorder button {
+  margin-right: 10px;
+}
+
+
+
+import React, { useState } from 'react';
+import Waveform from '../Waveform/Waveform';
+import './RealTimeAnalysis.css';
+
+const RealTimeAnalysis = ({ onNewDetection }) => {
+  const [stressLevel, setStressLevel] = useState(0);
+  const [waveformData, setWaveformData] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  // Simulate real-time data updates (replace with actual data fetching)
+  const handleAudioInput = (audioData) => {
+    // Process audioData and update state
+    const newStressLevel = Math.random() * 100; // Simulated stress level
+    setStressLevel(newStressLevel);
+    setWaveformData([...waveformData, audioData]);
+
+    if (newStressLevel > 70) {
+      const notification = "High stress detected!";
+      setNotifications([...notifications, notification]);
+      onNewDetection({ timestamp: new Date().toISOString(), stressLevel: newStressLevel, details: notification });
+    }
+  };
+
+  return (
+    <div className="real-time-analysis">
+      <h2>Real-Time Analysis</h2>
+      <Waveform data={waveformData} />
+      <div>
+        <p>Current Stress Level: {stressLevel.toFixed(2)}%</p>
+        <progress value={stressLevel} max="100"></progress>
+      </div>
+      <div>
+        {notifications.map((note, index) => (
+          <div key={index} className="notification">
+            {note}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default RealTimeAnalysis;
+
+
+.real-time-analysis {
+  margin: 20px;
+}
+
+.real-time-analysis .notification {
+  background-color: red;
+  color: white;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+
+import React from 'react';
+import { Table } from 'react-bootstrap';
+import './History.css';
+
+const History = ({ log }) => {
+  return (
+    <div className="history">
+      <h2>History</h2>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Stress Level</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {log.map((entry, index) => (
+            <tr key={index}>
+              <td>{entry.timestamp}</td>
+              <td>{entry.stressLevel.toFixed(2)}%</td>
+              <td>{entry.details}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default History;
+
+
+.history {
+  margin: 20px;
+}
+
+
+import React from 'react';
+import './Waveform.css';
+
+const Waveform = ({ data }) => {
+  // Render waveform data
+  return (
+    <div className="waveform">
+      {/* Placeholder for waveform visualization */}
+      <canvas id="waveformCanvas"></canvas>
+    </div>
+  );
+};
+
+export default Waveform;
+
+
+.waveform {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+
+import React, { useState } from 'react';
+import RealTimeAnalysis from '../components/RealTimeAnalysis/RealTimeAnalysis';
+import AudioRecorder from '../components/AudioRecorder/AudioRecorder';
+import History from '../components/History/History';
+import './HomePage.css';
+
+const HomePage = () => {
+  const [log, setLog] = useState([]);
+
+  const handleNewDetection = (detection) => {
+    setLog([...log, detection]);
+  };
+
+  return (
+    <div className="home-page">
+      <header>
+        <h1>Audio Stress Detection System</h1>
+        <nav>
+          <a href="#real-time">Real-Time Analysis</a>
+          <a href="#recorder">Recorder</a>
+          <a href="#history">History</a>
+        </nav>
+      </header>
+      <main>
+        <section id="real-time">
+          <RealTimeAnalysis onNewDetection={handleNewDetection} />
+        </section>
+        <section id="recorder">
+          <AudioRecorder />
+        </section>
+        <section id="history">
+          <History log={log} />
+        </section>
+      </main>
+    </div>
+  );
+};
+
+export default HomePage;
+.home-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.home-page header {
+  background-color: #282c34;
+  color: white;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.home-page nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.home-page nav a:hover {
+  text-decoration: underline;
+}
+
+
+app.js
+
+
+import React from 'react';
+import HomePage from './pages/HomePage';
+import './App.css';
+
+const App = () => {
+  return (
+    <div className="App">
+      <HomePage />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+
+index.css
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
