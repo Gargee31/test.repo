@@ -69,3 +69,5 @@ const Login = () => {
 };
 
 export default Login;
+
+@app.post("/api/location") async def save_location(data: LocationData, db: Session = Depends(get_db)): location_event = LocationEvent( user_id=data.user_id, latitude=data.latitude, longitude=data.longitude ) db.add(location_event) db.commit() return {"status": "location saved"}
