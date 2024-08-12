@@ -1,22 +1,29 @@
+
 import React, { useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import "./styles.css";
 
-// Dummy data service to simulate real-time data
-const getInitialData = () => {
+// Function to generate data for the previous day
+const getPreviousDayData = () => {
   const baseTimestamp = new Date();
-  baseTimestamp.setMinutes(baseTimestamp.getMinutes() - 1); // To ensure it's not "now"
+  baseTimestamp.setDate(baseTimestamp.getDate() - 1); // Set to previous day
   
-  return [{
-    timestamp: baseTimestamp.toISOString(),
+  const timestamps = Array.from({ length: 63 }, (_, i) => {
+    const timestamp = new Date(baseTimestamp);
+    timestamp.setHours(8 + i * 2);
+    return timestamp.toISOString();
+  });
+
+  return timestamps.map(timestamp => ({
+    timestamp,
     description: "Normal activity",
     ipAddress: "10.83.129.233"
-  }];
+  }));
 };
 
 const Anomaly = () => {
-  const [data, setData] = useState(getInitialData());
-  
+  const [data, setData] = useState(getPreviousDayData());
+
   useEffect(() => {
     const fetchData = async () => {
       // Add the "Location change detected" entry after 1 minute
@@ -27,6 +34,14 @@ const Anomaly = () => {
       };
       setData(prevData => [...prevData, newEntry]);
     };
+
+    // Add initial "Normal activity" entry for today
+    const initialEntry = {
+      timestamp: new Date().toISOString(),
+      description: "Normal activity",
+      ipAddress: "10.83.129.233"
+    };
+    setData(prevData => [...prevData, initialEntry]);
 
     // Set up a timer to add the location change entry after 1 minute
     const timerId = setTimeout(fetchData, 60000); // 60,000 milliseconds = 1 minute
