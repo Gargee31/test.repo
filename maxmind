@@ -1,0 +1,48 @@
+import random
+import csv
+
+# Number of entries to generate
+num_entries = 10000  # This can be adjusted based on needs
+
+# Define a sample IP range and associated geolocation data for cities in India and around the world
+ip_ranges = [
+    {"ip_start": "103.0.0.0", "ip_end": "103.0.0.255", "country": "India", "city": "Mumbai", "latitude": 19.0760, "longitude": 72.8777},
+    {"ip_start": "106.0.0.0", "ip_end": "106.0.0.255", "country": "India", "city": "Delhi", "latitude": 28.6139, "longitude": 77.2090},
+    {"ip_start": "110.0.0.0", "ip_end": "110.0.0.255", "country": "India", "city": "Bangalore", "latitude": 12.9716, "longitude": 77.5946},
+    {"ip_start": "115.0.0.0", "ip_end": "115.0.0.255", "country": "India", "city": "Hyderabad", "latitude": 17.3850, "longitude": 78.4867},
+    {"ip_start": "119.0.0.0", "ip_end": "119.0.0.255", "country": "India", "city": "Chennai", "latitude": 13.0827, "longitude": 80.2707},
+    {"ip_start": "120.0.0.0", "ip_end": "120.0.0.255", "country": "India", "city": "Pune", "latitude": 18.5204, "longitude": 73.8567},
+    {"ip_start": "122.0.0.0", "ip_end": "122.0.0.255", "country": "India", "city": "Kolkata", "latitude": 22.5726, "longitude": 88.3639},
+    {"ip_start": "123.0.0.0", "ip_end": "123.0.0.255", "country": "India", "city": "Ahmedabad", "latitude": 23.0225, "longitude": 72.5714},
+    {"ip_start": "124.0.0.0", "ip_end": "124.0.0.255", "country": "India", "city": "Jaipur", "latitude": 26.9124, "longitude": 75.7873},
+    {"ip_start": "125.0.0.0", "ip_end": "125.0.0.255", "country": "India", "city": "Surat", "latitude": 21.1702, "longitude": 72.8311},
+    # More cities and countries can be added here
+]
+
+# Function to generate a random IP address within a given range
+def random_ip(ip_start, ip_end):
+    start = list(map(int, ip_start.split('.')))
+    end = list(map(int, ip_end.split('.')))
+    return '.'.join(str(random.randint(start[i], end[i])) for i in range(4))
+
+# Define column names (mirroring MaxMind's structure, but simplified)
+column_names = ["ip_address", "country", "city", "latitude", "longitude"]
+
+# List to store the generated data
+data = []
+
+# Generate the data
+for _ in range(num_entries):
+    ip_range = random.choice(ip_ranges)
+    ip_address = random_ip(ip_range["ip_start"], ip_range["ip_end"])
+    row = [ip_address, ip_range["country"], ip_range["city"], ip_range["latitude"], ip_range["longitude"]]
+    data.append(row)
+
+# Write to a CSV file
+csv_filename = "generated_maxmind_replica.csv"
+with open(csv_filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(column_names)  # Write headers
+    writer.writerows(data)  # Write data
+
+print(f"Data written to {csv_filename}")
