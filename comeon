@@ -1,0 +1,167 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./styles1.css";
+import Modal from 'react-modal';
+
+// Set the app element for accessibility
+Modal.setAppElement('#root');
+
+const AccountSummary = () => {
+  const navigate = useNavigate();
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [showOTPPopup, setShowOTPPopup] = useState(false);
+  const [showTransactionCompletePopup, setShowTransactionCompletePopup] = useState(false);
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+
+    if (password === "helium") {
+      setShowTransactionCompletePopup(true);
+    } else {
+      setShowOTPPopup(true);
+    }
+  };
+
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+
+    if (otp === "9987") {
+      navigate('/Transaction');
+    } else {
+      setAlertMessage("Invalid OTP. Redirecting to login page.");
+      setIsAlertOpen(true);
+      setTimeout(() => navigate("/Login"), 2000); // Redirect after alert
+    }
+  };
+
+  const closeModal = () => {
+    setShowPasswordPopup(false);
+    setShowOTPPopup(false);
+    setShowTransactionCompletePopup(false);
+    setIsAlertOpen(false);
+  };
+
+  const openPasswordPopup = () => {
+    setShowPasswordPopup(true);
+  };
+
+  return (
+    <div className="account-summary">
+      <div className="yellowTape"></div>
+      <div className="page">
+        <div className="header-menu">
+          <li><a href="#">Accounts</a></li>
+          <li><a href="#">Brokerage</a></li>
+          <li><a href="#" onClick={openPasswordPopup}>Transfer & Pay</a></li>
+          <li><a href="#">Plan & Learn</a></li>
+          <li><a href="#">Security & Support</a></li>
+          <li><a href="/userprofile">Create Behavioral Profile</a></li>
+        </div>
+
+        <div className="content">
+          <div className="summary">
+            <h2>Account Summary</h2>
+            <div className="account-info">
+              <div className="account-name">Gargee Dorle</div>
+              <div className="account-balance">$9,491.08</div>
+            </div>
+            <div className="disclosures">
+              <p>*Account Disclosures</p>
+              <p>Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.</p>
+              <p>Equal Housing Lender</p>
+              <p>FICO is a registered trademark of Fair Isaac Corporation in the United States and other countries.</p>
+            </div>
+          </div>
+
+          <div className="sidebar">
+            <div className="app-info">
+              <h3>Now in the app!</h3>
+              <p>Check your account security level</p>
+              <img src="phone.png" alt="Phone Mockup" className="phone-mockup" />
+              <p>Check out the redesigned Security Center in the mobile app.</p>
+              <p>Look for the green shield icon under Menu.</p>
+            </div>
+            <div className="qr-code">
+              <p>Scan with your phone to get the app and access the Security Center</p>
+              <img src="qr.png" alt="QR Code" className="qr-code-image" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Password Popup */}
+      {showPasswordPopup && (
+        <Modal isOpen={true} onRequestClose={closeModal} className="modal">
+          <div className="popup-container">
+            <div className="popup-content">
+              <h2>Enter your password</h2>
+              <form onSubmit={handlePasswordSubmit}>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  required
+                />
+                <button type="submit">Submit</button>
+              </form>
+              <button onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* OTP Popup */}
+      {showOTPPopup && (
+        <Modal isOpen={true} onRequestClose={closeModal} className="modal">
+          <div className="popup-container">
+            <div className="popup-content">
+              <h2>Enter OTP</h2>
+              <form onSubmit={handleOtpSubmit}>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="OTP"
+                  required
+                />
+                <button type="submit">Submit</button>
+              </form>
+              <button onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Transaction Complete Popup */}
+      {showTransactionCompletePopup && (
+        <Modal isOpen={true} onRequestClose={closeModal} className="modal">
+          <div className="popup-container">
+            <div className="popup-content">
+              <h2>Transaction Completed</h2>
+              <button onClick={() => navigate('/Transaction')}>Go to Transaction Page</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Alert Modal */}
+      {isAlertOpen && (
+        <Modal isOpen={true} onRequestClose={closeModal} className="modal">
+          <div className="popup-container">
+            <div className="popup-content">
+              <h2>{alertMessage}</h2>
+              <button onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default AccountSummary;
